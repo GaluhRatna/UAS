@@ -1,0 +1,81 @@
+import mysql.connector
+import os
+
+
+#open connection
+config=mysql.connector.connect(
+    host    = 'localhost',
+    user    = 'root',
+    passwd  = '',
+    database= 'db_akademik_0568'
+)
+
+if config.is_connected():
+    print('open connection successful')
+def write_db_api():
+    url = 'https://api.abcfdab.cfd/students'
+    response = requests.get(url)
+    data = response.json()
+    cursor = config.cursor()
+    sql = "INSERT INTO tbl_studentsn_0568(id, nim, nama, jk, jurusan, alamat) VALUES(%s,%s,%s,%s,%s,%s)"
+    for i in data ['data'] :
+        val =(i['id'],i['nim'],i['nama'],i['jk'],i['jurusan'],i['alamat'])
+        cursor.execute(sql, val)
+        mydb.commit()
+
+def selec_all_data():
+    cursor = config.cursor()
+    sql = "SELECT * FROM tbl_students_0568"
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    if cursor.rowcount < 0:
+        print("Data Tidak Tersedia")
+    else :
+        for data in result:
+            print(data)
+
+def selec_limit_data ():
+    limit= int(input("\nmasukkan limit: "))
+    cursor = config.cursor()
+    sql = ("SELEC * FROM tbl_students_0568")
+    cursor.execute(sql)
+    result = cursor.fetchmany(limit)
+    for x in result :
+        print(x)
+
+def selec_singel_data():
+    nim = input("Masukkan NIM : ")
+    cursor = config.cursor()
+    sql = "SELECT * FROM tbl_students_0568 WHERE nim=%s"
+    val = (nim,)
+    cursor.execute(sql, val)
+    result = cursor.fetchone()
+
+    if cursor.rowcount < 0:
+        print("Data Tidak Tersedia")
+    else:
+        for data in result:
+            print(data)
+
+def menu() -> object:
+    print("1.Tampilkan Semua Data")
+    print("2.Tampilkan data berdasarkan limit")
+    print("3.Tampilkan data berdasarkan nim")
+    print("0.Keluar")
+
+    option = input("Pilih Menu > ")
+    if option =="1" :
+        selec_all_data()
+    elif option == "2" :
+        selec_limit_data()
+    elif option =="3":
+        selec_singel_data()
+    elif option =="0":
+        exit()
+    else :
+        print("Pilihan Menu Yang Valid")
+
+if __name__ == '__main__':
+    while(True):
+        menu()
